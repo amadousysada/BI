@@ -23,7 +23,7 @@ rules = association_rules(frequent_item_sets, metric="confidence", min_threshold
 '''x= rules.loc[0]
 for r in x:
 	print (r)'''
-print(rules['antecedents'])
+print(rules['confidence'])
 exit()
 
 
