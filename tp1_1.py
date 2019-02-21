@@ -20,10 +20,9 @@ cmap = cm.get_cmap('gnuplot')
 pd.plotting.scatter_matrix(
         data[['tps00001 (2013)','teilm (F dec 2013)', 'teilm (M dec 2013)', 'tec00118 (2013)',
        'teimf00118 (dec 2013)', 'tsdsc260(2013)', 'tet00002 (2013)',
-       'tsc00001 (2011)', 'tsc00004 (2012)']],figsize=(20,15))
-plt . savefig ('fruits_histogram_')
-'''for attr in ['tps00001 (2013)', 'tec00115 (2013)','teilm (F dec 2013)', 'teilm (M dec 2013)', 'tec00118 (2013)','teimf00118 (dec 2013)', 'tsdsc260(2013)', 'tet00002 (2013)','tsc00001 (2011)', 'tsc00004 (2012)']:
-	pd.DataFrame({k: v for k, v in data .groupby('tps00001 (2013)')[attr]}).plot. hist(stacked=True)
-	plt . suptitle (attr)
-	plt . savefig ('fruits_histogram_'+attr)
-'''
+       'tsc00001 (2011)', 'tsc00004 (2012)']],figsize=(20,15),diagonal="kde")
+plt . savefig ('data_histogram_')
+for attr in ['tps00001 (2013)', 'tec00115 (2013)','teilm (F dec 2013)', 'teilm (M dec 2013)', 'tec00118 (2013)','teimf00118 (dec 2013)', 'tsdsc260(2013)', 'tet00002 (2013)','tsc00001 (2011)', 'tsc00004 (2012)']:
+    data.loc[:,["tps00001 (2013)",attr]].plot.kde()
+    plt . suptitle (attr)
+    plt . savefig ('fruits_histogram_'+attr)
