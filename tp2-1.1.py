@@ -4,7 +4,7 @@ import pandas as pd
 
 data = pd.read_csv("eurostat\eurostat-2013.csv")
 print(data.columns)
-print(data[["Code", "tps00001 (2013)", "tec00115 (2013)", "tsc00001 (2011)", "tsc00004 (2012)", "tec00118 (2013)"]])
+print(data[["Code", "tps00001 (2013)","tsc00001 (2011)"]])
 exit()
 #correlation_circle
 def correlation_circle(df,nb_var,x_axis,y_axis):
