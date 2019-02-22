@@ -3,9 +3,13 @@
 import pandas as pd
 
 data = pd.read_csv("eurostat\eurostat-2013.csv")
-print(data.columns)
-print(data[["Code", "tps00001 (2013)","tsc00001 (2011)"]])
-exit()
+
+#diviser les valeurs de la colonne('tsc00004 (2012)') par la population
+data['tsc00004 (2012)'] = data['tsc00004 (2012)'].apply(lambda x: x/data.loc[lambda df: df['tsc00004 (2012)']==38637]["tps00001 (2013)"])
+
+#Supprimer les données correspondant à la population.
+data =data.drop(['tps00001 (2013)'], axis=1)
+
 #correlation_circle
 def correlation_circle(df,nb_var,x_axis,y_axis):
     fig, axes = plt.subplots(figsize=(8,8))
