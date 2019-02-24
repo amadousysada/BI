@@ -10,6 +10,71 @@ data['tsc00004 (2012)'] = data['tsc00004 (2012)'].apply(lambda x: x/data.loc[lam
 #Supprimer les données correspondant à la population.
 data =data.drop(['tps00001 (2013)'], axis=1)
 
+standardscaler = preprocessing.StandardScaler()
+
+X = data.iloc[:,2:11]
+#y = (0.3-np.mean(data['tec00115 (2013)']))/np.std(data['tec00115 (2013)'][0])
+Y= X.columns
+
+X_norm = standardscaler.fit_transform(X)
+
+pca = PCA()
+
+X_pca =pca.fit_transform(X_norm)
+
+pca1_pca2 = pd.DataFrame(data=X_pca, columns = Y)
+
+from matplotlib import cm
+cmap = cm.get_cmap('gnuplot')
+df = pd.concat([pca1_pca2, data[['Code']]], axis = 1)
+fig = plt.figure(figsize = (8,8))
+ax = fig.add_subplot(1,1,1) 
+ax.set_xlabel('tec00115 (2013)', fontsize = 15)
+ax.set_ylabel('teilm (F dec 2013)', fontsize = 15)
+ax.set_title('2 first components PCA', fontsize = 20)
+targets = finalDf['Code'].values
+colors = ['r', 'g', 'b']
+for target in targets:
+    
+    indicesToKeep = df['Code'] == target
+    plt.annotate(target,
+                     xy=(
+                         df.loc[indicesToKeep, 'tec00115 (2013)'],
+                         df.loc[indicesToKeep, 'teilm (F dec 2013)']
+                     )
+                )
+    ax.scatter(df.loc[indicesToKeep, 'tec00115 (2013)']
+               , df.loc[indicesToKeep, 'teilm (F dec 2013)']
+              , cmap = cmap
+               , s = 50)
+ax.legend(targets)
+ax.grid()
+plt.savefig("2 facteurs principaux de l'ACP")
+plt.close()
+
+#teilm (M dec 2013)	tec00118 (2013)
+fig = plt.figure(figsize = (8,8))
+ax.set_xlabel('teilm (M dec 2013)', fontsize = 15)
+ax.set_ylabel('tec00118 (2013)', fontsize = 15)
+ax.set_title('3th and 4th components PCA', fontsize = 20)
+targets = finalDf['Code'].values
+for target in targets:
+    
+    indicesToKeep = df['Code'] == target
+    plt.annotate(target,
+                     xy=(
+                         df.loc[indicesToKeep, 'tec00118 (2013)'],
+                         df.loc[indicesToKeep, 'teilm (M dec 2013)']
+                     )
+                )
+    ax.scatter(df.loc[indicesToKeep, 'tec00118 (2013)']
+               , df.loc[indicesToKeep, 'teilm (M dec 2013)']
+              , cmap = cmap
+               , s = 50)
+ax.legend(targets)
+ax.grid()
+plt.savefig("3iem et 4iem facteurs de l'ACP")
+plt.close()
 #correlation_circle
 def correlation_circle(df,nb_var,x_axis,y_axis):
     fig, axes = plt.subplots(figsize=(8,8))
