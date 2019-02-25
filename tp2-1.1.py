@@ -14,7 +14,7 @@ from mpl_toolkits.mplot3d import Axes3D
 data = pd.read_csv("eurostat/eurostat-2013.csv")
 
 #diviser les valeurs de la colonne('tsc00004 (2012)') par la population
-data['tsc00004 (2012)'] = data['tsc00004 (2012)'].apply(lambda x: x/data.loc[lambda df: df['tsc00004 (2012)']==38637]["tps00001 (2013)"])
+data['tsc00004 (2012)'] = data['tsc00004 (2012)'].divide(data['tps00001 (2013)'])
 
 #Supprimer les données correspondant à la population.
 data =data.drop(['tps00001 (2013)'], axis=1)
