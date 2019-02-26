@@ -115,30 +115,25 @@ def correlation_circle(df,nb_var,x_axis,y_axis):
 correlation_circle(data,9,0,1)
 
 # Plot clusters
-lst_kmeans = [KMeans(n_clusters=n) for n in range(3,6)]
-titles = [str(x)+' clusters 'for x in range(3,6)]
+lst_kmeans = [KMeans(n_clusters=n) for n in range(2,8)]
+titles = [str(x)+' clusters 'for x in range(2,8)]
 fignum = 1
-scaler = MinMaxScaler()
-
-X_norm = scaler.fit_transform(X)
-
-'''for kmeans in lst_kmeans:
+for kmeans in lst_kmeans:
     fig = plt. figure (fignum, figsize =(8, 6))
     ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
     kmeans.fit(X_norm)
     labels = kmeans.labels_
-    ax.scatter(X,c=labels.astype(np.float), edgecolor='k')
+    ax.scatter(X['teilm (F dec 2013)'],X['teilm (M dec 2013)'],c=labels.astype(np.float), edgecolor='k')
     ax.w_xaxis.set_ticklabels([])
     ax.w_yaxis.set_ticklabels([])
     ax.w_zaxis.set_ticklabels ([])
-    ax.set_xlabel('mass')
-    ax.set_ylabel('width')
+    ax.set_xlabel('teilm (F dec 2013)')
+    ax.set_ylabel('teilm (M dec 2013)')
     ax.set_title ( titles [fignum - 1])
     ax.dist = 12
     plt.savefig ('k-means_'+str(2+fignum)+'_clusters')
     fignum = fignum + 1
     plt.close( fig )
-'''
 # print centroids associated with several countries
 lst_countries=['EL','FR','DE','US']
 # centroid of the entire dataset
