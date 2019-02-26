@@ -14,7 +14,7 @@ from mpl_toolkits.mplot3d import Axes3D
 data = pd.read_csv("eurostat/eurostat-2013.csv")
 
 #diviser les valeurs de la colonne('tsc00004 (2012)') par la population
-data['tsc00004 (2012)'] = data['tsc00004 (2012)'].apply(lambda x: x/data.loc[lambda df: df['tsc00004 (2012)']==38637]["tps00001 (2013)"])
+data['tsc00004 (2012)'] = data['tsc00004 (2012)'].apply(lambda x: x/data.loc[lambda df: df['tsc00004 (2012)']==x]["tps00001 (2013)"])
 
 #Supprimer les données correspondant à la population.
 data =data.drop(['tps00001 (2013)'], axis=1)
@@ -31,11 +31,11 @@ pca = PCA()
 
 X_pca =pca.fit_transform(X_norm)
 
-pca1_pca2 = pd.DataFrame(data=X_pca, columns = Y)
+axes = pd.DataFrame(data=X_pca, columns = Y)
 
 
 cmap = cm.get_cmap('gnuplot')
-df = pd.concat([pca1_pca2, data[['Code']]], axis = 1)
+df = pd.concat([axes, data[['Code']]], axis = 1)
 
 fig = plt.figure(figsize = (8,8))
 ax = fig.add_subplot(1,1,1) 
