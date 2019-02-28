@@ -10,11 +10,15 @@ from sklearn import preprocessing
 from sklearn. cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
 from mpl_toolkits.mplot3d import Axes3D
+from R_square_clustering import r_square
+from scipy.cluster import hierarchy
 
 data = pd.read_csv("eurostat/eurostat-2013.csv")
-
+#print(data[["tps00001 (2013)","tet00002 (2013)"]])
+#exit()
 #diviser les valeurs de la colonne('tsc00004 (2012)') par la population
 data['tsc00004 (2012)'] = data['tsc00004 (2012)'].divide(data['tps00001 (2013)'])
+data['tet00002 (2013)'] = data['tet00002 (2013)'].divide(data['tps00001 (2013)'])
 
 #Supprimer les données correspondant à la population.
 data =data.drop(['tps00001 (2013)'], axis=1)
@@ -93,7 +97,6 @@ sqrt_eigval = np.sqrt(eigval)
 corvar = np.zeros((p,p))
 for k in range(p):
     corvar [:, k] = pca.components_[k,:]*sqrt_eigval[k]
-    print(corvar)
 #correlation_circle
 def correlation_circle(df,nb_var,x_axis,y_axis):
     fig, axes = plt.subplots(figsize=(8,8))
@@ -114,34 +117,54 @@ def correlation_circle(df,nb_var,x_axis,y_axis):
 
 correlation_circle(data,9,0,1)
 
+#question 5
+lst_k=range(2,8)
+lst_rsq = []
+for k in lst_k:
+    est=KMeans(n_clusters=k)
+    est.fit (X_norm)
+    lst_rsq.append(r_square(X_norm, est.cluster_centers_,est.labels_,k))
+fig = plt. figure ()
+plt.plot(lst_k, lst_rsq, 'bx-')
+plt.xlabel('k')
+plt.ylabel('RSQ')
+plt.title ('The Elbow Method showing the optimal k')
+plt.savefig('r_square')
+plt.close(fig)
+
+
 # Plot clusters
-lst_kmeans = [KMeans(n_clusters=n) for n in range(2,8)]
-titles = [str(x)+' clusters 'for x in range(2,8)]
-fignum = 1
-for kmeans in lst_kmeans:
-    fig = plt. figure (fignum, figsize =(8, 6))
-    ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
-    kmeans.fit(X_norm)
-    labels = kmeans.labels_
-    ax.scatter(X['teilm (F dec 2013)'],X['teilm (M dec 2013)'],c=labels.astype(np.float), edgecolor='k')
-    ax.w_xaxis.set_ticklabels([])
-    ax.w_yaxis.set_ticklabels([])
-    ax.w_zaxis.set_ticklabels ([])
-    ax.set_xlabel('teilm (F dec 2013)')
-    ax.set_ylabel('teilm (M dec 2013)')
-    ax.set_title ( titles [fignum - 1])
-    ax.dist = 12
-    plt.savefig ('k-means_'+str(2+fignum)+'_clusters')
-    fignum = fignum + 1
-    plt.close( fig )
+est = KMeans(n_clusters=4)
+fig = plt.figure (1, figsize =(8, 6))
+ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
+est.fit(X)
+labels = est.labels_
+centroids = est.cluster_centers_
+plt.scatter(centroids[:, 0], centroids[:, 1],
+            marker='o',
+            c='w')
+plt.title('K-means clustering')
+plt.xticks(())
+plt.yticks(())
+ax.dist = 12
+plt.savefig ('k-means_4_clusters')
+plt.close( fig )
 # print centroids associated with several countries
 lst_countries=['EL','FR','DE','US']
 # centroid of the entire dataset
 # est: KMeans model fit to the dataset
-'''print (est.cluster_centers_)
+y=data['Code']
+
+print (est.cluster_centers_)
 for name in lst_countries:
     num_cluster = est.labels_[y.loc[y==name].index][0]
     print ('Num cluster for '+name+': '+str(num_cluster))
     print ('\tlist of countries: '+', '.join(y.iloc[np.where(est.labels_==num_cluster)].values))
-    print ('\tcentroid: '+str(est.cluster_centers_[num_cluster]))'''
+    print ('\tcentroid: '+str(est.cluster_centers_[num_cluster]))
 
+
+Z = hierarchy.linkage(X,'ward')
+lst_labels = map(lambda pair: pair[0], zip( data['Code'].values, data.index))
+plt.figure()
+dn = hierarchy.dendrogram(Z,color_threshold=0,labels=lst_labels)
+plt.show()
