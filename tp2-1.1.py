@@ -14,8 +14,7 @@ from R_square_clustering import r_square
 from scipy.cluster import hierarchy
 
 data = pd.read_csv("eurostat/eurostat-2013.csv")
-#print(data[["tps00001 (2013)","tet00002 (2013)"]])
-#exit()
+
 #diviser les valeurs de la colonne('tsc00004 (2012)') par la population
 data['tsc00004 (2012)'] = data['tsc00004 (2012)'].divide(data['tps00001 (2013)'])
 data['tet00002 (2013)'] = data['tet00002 (2013)'].divide(data['tps00001 (2013)'])
@@ -26,7 +25,7 @@ data =data.drop(['tps00001 (2013)'], axis=1)
 standardscaler = preprocessing.StandardScaler()
 
 X = data.iloc[:,2:11]
-#y = (0.3-np.mean(data['tec00115 (2013)']))/np.std(data['tec00115 (2013)'][0])
+
 Y= ["axe1","axe2","axe3","axe4","axe5","axe6","axe7","axe8","axe9"]
 
 X_norm = standardscaler.fit_transform(X)
@@ -41,6 +40,10 @@ axes = pd.DataFrame(data=X_pca, columns = Y)
 cmap = cm.get_cmap('gnuplot')
 df = pd.concat([axes, data[['Code']]], axis = 1)
 
+'''
+   l'affichage des instances étiquetées par le code du pays suivant les 2 facteurs
+principaux de l'ACP, puis suivant les facteurs 3 et 4 de l'ACP.
+'''
 fig = plt.figure(figsize = (8,8))
 ax = fig.add_subplot(1,1,1) 
 ax.set_xlabel('axe1', fontsize = 15)
@@ -97,6 +100,8 @@ sqrt_eigval = np.sqrt(eigval)
 corvar = np.zeros((p,p))
 for k in range(p):
     corvar [:, k] = pca.components_[k,:]*sqrt_eigval[k]
+    
+    
 #correlation_circle
 def correlation_circle(df,nb_var,x_axis,y_axis):
     fig, axes = plt.subplots(figsize=(8,8))
@@ -115,7 +120,7 @@ def correlation_circle(df,nb_var,x_axis,y_axis):
     plt.savefig('acp_correlation_circle_axes_'+str(x_axis)+'_'+str(y_axis))
     plt.close(fig)
 
-correlation_circle(data,9,0,1)
+correlation_circle(data,9,2,3)
 
 #question 5
 lst_k=range(2,8)
@@ -133,22 +138,10 @@ plt.savefig('r_square')
 plt.close(fig)
 
 
-# Plot clusters
-est = KMeans(n_clusters=4)
-fig = plt.figure (1, figsize =(8, 6))
-ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
+est = KMeans(n_clusters=5)
+
 est.fit(X)
-labels = est.labels_
-centroids = est.cluster_centers_
-plt.scatter(centroids[:, 0], centroids[:, 1],
-            marker='o',
-            c='w')
-plt.title('K-means clustering')
-plt.xticks(())
-plt.yticks(())
-ax.dist = 12
-plt.savefig ('k-means_4_clusters')
-plt.close( fig )
+
 # print centroids associated with several countries
 lst_countries=['EL','FR','DE','US']
 # centroid of the entire dataset
@@ -167,4 +160,5 @@ Z = hierarchy.linkage(X,'ward')
 lst_labels = map(lambda pair: pair[0], zip( data['Code'].values, data.index))
 plt.figure()
 dn = hierarchy.dendrogram(Z,color_threshold=0,labels=lst_labels)
-plt.show()
+plt.savefig ('dendogramme')
+plt.close( fig )
