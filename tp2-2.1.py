@@ -12,6 +12,8 @@ from sklearn.model_selection import cross_val_predict
 from sklearn import metrics
 from scipy.io import arff
 from sklearn.impute import SimpleImputer
+from sklearn import preprocessing
+
 
 dummycl = DummyClassifier(strategy="most_frequent")
 gmb = GaussianNB()
@@ -20,8 +22,14 @@ logreg = LogisticRegression(solver="liblinear")
 svc = svm.SVC(gamma='scale')
 
 data, meta = arff.loadarff("crx.arff")
+
 imp_mean = SimpleImputer(missing_values=np.nan, strategy='mean')
 imp_mean.fit_transform(data)
+
+standardscaler = preprocessing.StandardScaler()
+
+X_norm = standardscaler.fit_transform(data)
+
 lst_classif = [dummycl, gmb, dectree, logreg, svc]
 lst_classif_names = ['Dummy', 'Naive Bayes', 'Decision tree', 'Logistic regression', 'SVM']
 
